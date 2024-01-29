@@ -8,10 +8,19 @@ const contactsFolder = "db";
 const contactsFile = "contacts.json";
 const contactsPath = path.join(baseDir, contactsFolder, contactsFile);
 
-const listContacts = async () => {
+const getContacts = async () => {
   try {
     const data = await fs.readFile(contactsPath, "utf-8");
-    console.log(data.green);
+    return JSON.parse(data);
+  } catch (error) {
+    console.log(error.message.red.underline);
+  }
+};
+
+const listContacts = async () => {
+  try {
+    const contacts = await getContacts();
+    console.log(contacts);
   } catch (error) {
     console.log(error.message.red.underline);
   }
@@ -19,8 +28,7 @@ const listContacts = async () => {
 
 const getContactById = async (contactId) => {
   try {
-    const data = await fs.readFile(contactsPath, "utf-8");
-    const contacts = JSON.parse(data);
+    const contacts = await getContacts();
     const foundContact = contacts.find((contact) => contact.id === contactId);
 
     if (foundContact) {
@@ -35,8 +43,7 @@ const getContactById = async (contactId) => {
 
 const removeContact = async (contactId) => {
   try {
-    const data = await fs.readFile(contactsPath, "utf-8");
-    const contacts = JSON.parse(data);
+    const contacts = await getContacts();
     const contactIndex = contacts.findIndex(
       (contact) => contact.id === contactId
     );
@@ -56,8 +63,7 @@ const removeContact = async (contactId) => {
 
 const addContact = async (name, email, phone) => {
   try {
-    const data = await fs.readFile(contactsPath, "utf-8");
-    const contacts = JSON.parse(data);
+    const contacts = await getContacts();
     const id = uuidv4();
     const newContact = {
       id,
